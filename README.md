@@ -1,6 +1,6 @@
 # Atlantis2Webuntis #
 
-## ... erstellt eine CSV-Datei für den Import von Atlantis-Schülerdaten und eine Zipdatei mit den Schülerfotos in Webuntis. ##
+## ... erstellt eine CSV-Datei mit Atlantis-Schülerdaten und eine Zipdatei mit den Schülerfotos für den Import in Webuntis. ##
 
 ### Vorgehen
 
