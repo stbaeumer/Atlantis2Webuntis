@@ -139,7 +139,7 @@ namespace atlantis2webuntis
             return string.Empty;
         }
 
-        public Schuelers(string connectionStringAtlantis, Betriebe betriebe, Adressen adressen)
+        public Schuelers(string connectionStringAtlantis, Betriebe betriebe, Adressen adressen, Klasses klasses, Bemerkungen bemerkungen)
         {
             using (OdbcConnection connection = new OdbcConnection(connectionStringAtlantis))
             {
@@ -502,7 +502,6 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
                     {
                         var schueler = new Schueler();
                         schueler.Id = theRow["AtlantisSchuelerId"] == null ? -99 : Convert.ToInt32(theRow["AtlantisSchuelerId"]);
-
                         schueler.Name = theRow["Nachname"] == null ? "" : theRow["Nachname"].ToString();
                         schueler.Firstname = theRow["Vorname"] == null ? "" : theRow["Vorname"].ToString();
                         schueler.Grade = theRow["Klasse"] == null ? "" : theRow["Klasse"].ToString();
@@ -530,13 +529,22 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
 
                         schueler.Adressen.AddRange(from a in adressen where a.IdAtlantis == schueler.Id select a);
 
-                        if (schueler.Bezugsjahr == (DateTime.Now.Month >= 8 ? DateTime.Now.Year : DateTime.Now.Year - 1) && schueler.Status != "VB" && schueler.Status != "8" && schueler.Status != "9" && schueler.Grade != "Z" && schueler.AktuellJN == "J")
+                        if (schueler.Name == "Röhricht")
+                        {
+                            string a = "";
+                        }
+
+                        // Beurlaubte Schüler werden nicht nach Untis exportiert
+
+                        bool beurlaubt = (from b in bemerkungen where b.AtlantisSchuelerId == schueler.Id where b.Kürzel == "B" select b).Any();
+
+                        if (!beurlaubt && schueler.Bezugsjahr == (DateTime.Now.Month >= 8 ? DateTime.Now.Year : DateTime.Now.Year - 1) && schueler.Status != "VB" && schueler.Status != "8" && schueler.Status != "9" && schueler.Grade != "Z" && schueler.AktuellJN == "J")
                         {
                             // Duplikate werden verhindert.
 
                             if (!(from s in this where s.Id == schueler.Id select s).Any())
-                            {
-                                this.Add(schueler);
+                            {                                
+                                    this.Add(schueler);                                                                
                             }
                         }
                     }

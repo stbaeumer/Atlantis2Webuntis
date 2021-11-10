@@ -30,7 +30,7 @@ namespace atlantis2webuntis
 
             try
             {
-                Console.WriteLine("Atlantis2Webuntis (Version 20201204)");
+                Console.WriteLine("Atlantis2Webuntis (Version 20210809)");
                 Console.WriteLine("====================================");
                 Console.WriteLine("");
                 
@@ -43,7 +43,11 @@ namespace atlantis2webuntis
                 // MassMailSenden(adressen);
                 
                 Betriebe betriebe = new Betriebe(ConnectionStringAtlantis, aktSjAtlantis);
-                Schuelers schuelers = new Schuelers(ConnectionStringAtlantis, betriebe, adressen);
+                Bemerkungen bemerkungen = new Bemerkungen(ConnectionStringAtlantis, aktSjAtlantis);
+                Periodes periodes = new Periodes();
+                var periode = (from p in periodes where p.Bis >= DateTime.Now.Date where DateTime.Now.Date >= p.Von select p.IdUntis).FirstOrDefault();
+                Klasses klasses = new Klasses(periode);
+                Schuelers schuelers = new Schuelers(ConnectionStringAtlantis, betriebe, adressen, klasses, bemerkungen);
                 Schuelers untisSchuelers = new Schuelers();
 
                 Console.WriteLine("");
@@ -58,12 +62,21 @@ namespace atlantis2webuntis
                 {
                     if (!(from s in schuelers where s.Id == schueler.Id select s).Any())
                     {
-                        Console.WriteLine(i.ToString().PadLeft(5) + ". " + schueler.Kurzname.PadRight(20) + " Austrittsdatum: " + DateTime.Now.ToShortDateString().PadRight(10) + " bisherige Klasse:" + schueler.Grade);
-                        schueler.Austrittsdatum = DateTime.Now;                                                
-                        schueler.Grade = "";
-                        schuelers.Add(schueler);
+                        // Wenn bereits ein Austrittsdatum in der Vergangenheit gesetzt ist, wird das nicht geändert
+
+                        if (!(schueler.Austrittsdatum < DateTime.Now))
+                        {
+                            if ((from k in klasses where k.NameUntis == schueler.Grade select k).Any())
+                            {
+                                Console.WriteLine(i.ToString().PadLeft(5) + ". " + schueler.Kurzname.PadRight(20) + " Austrittsdatum: " + DateTime.Now.ToShortDateString().PadRight(10) + " bisherige Klasse:" + schueler.Grade);
+                                schueler.Austrittsdatum = DateTime.Now;
+                                schueler.Grade = "";
+                                schuelers.Add(schueler);
+                            }
+                        }
                     }
                 }
+
                 Console.WriteLine("");
                 schuelers.GeneriereImportdateiFürWebuntis(ImportdateiFürWebuntis);
                 //schuelers.MoodlekurseAusKlassenAnlegen(MoodlekurseAusKlassenAnlegenPfad);
