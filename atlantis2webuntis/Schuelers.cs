@@ -16,7 +16,7 @@ namespace atlantis2webuntis
         internal void GeneriereImportdateiFürWebuntis(string datei)
         {
             Encoding enc = Encoding.GetEncoding("ISO-8859-1");
-            
+
             using (StreamWriter writer = new StreamWriter(datei, true, enc))
             {
                 Console.Write(("Die Datei wird geschrieben: " + datei).PadRight(75, '.'));
@@ -24,7 +24,7 @@ namespace atlantis2webuntis
                 writer.WriteLine(@"Schlüssel;E-Mail;Familienname;Vorname;Klasse;Kurzname;Geschlecht;Geburtsdatum;Eintrittsdatum;Austrittsdatum;Telefon;Mobil;Strasse;PLZ;Ort;ErzName;ErzMobil;ErzTelefon;Volljährig;BetriebName;BetriebStrasse;BetriebPlz;BetriebOrt;BetriebTelefon;O365Identität;Benutzername");
 
                 foreach (var schueler in this)
-                {                    
+                {
                     writer.WriteLine(schueler.SchreibeDatensatz());
                 }
 
@@ -131,7 +131,7 @@ namespace atlantis2webuntis
                 Console.WriteLine((" " + bilderHinzugefügt).PadLeft(30, '.'));
             }
         }
-        
+
         public static string SafeGetString(OleDbDataReader reader, int colIndex)
         {
             if (!reader.IsDBNull(colIndex))
@@ -488,7 +488,7 @@ schue_sj.durchschnitts_note_jz AS DurchschnittsnoteJahreszeugnis,
          ) 
 ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection);
 
-                Console.Write("Schüler*innen aus Atlantis ".PadRight(75,'.'));
+                Console.Write("Schüler*innen aus Atlantis ".PadRight(75, '.'));
 
                 connection.Open();
                 schuelerAdapter.Fill(dataSet, "DBA.schueler");
@@ -507,7 +507,7 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
                         schueler.Grade = theRow["Klasse"] == null ? "" : theRow["Klasse"].ToString();
                         schueler.Birthday = theRow["Gebdat"].ToString().Length < 3 ? new DateTime() : DateTime.ParseExact(theRow["Gebdat"].ToString(), "dd.MM.yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
                         schueler.Telefon = theRow["telefon"] == null ? "" : theRow["telefon"].ToString();
-                        schueler.Kurzname = schueler.generateKurzname();                        
+                        schueler.Kurzname = schueler.generateKurzname();
                         schueler.Mail = schueler.Kurzname + "@student.berufskolleg-borken.de";
                         schueler.Eintrittsdatum = theRow["Aufnahmedatum"].ToString().Length < 3 ? new DateTime() : DateTime.ParseExact(theRow["Aufnahmedatum"].ToString(), "dd.MM.yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 
@@ -543,8 +543,8 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
                             // Duplikate werden verhindert.
 
                             if (!(from s in this where s.Id == schueler.Id select s).Any())
-                            {                                
-                                    this.Add(schueler);                                                                
+                            {
+                                this.Add(schueler);
                             }
                         }
                     }
@@ -552,7 +552,7 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
                 Console.WriteLine((" " + this.Count.ToString()).PadLeft(30, '.'));
 
                 // Duplikate finden.
-                
+
                 foreach (var item in this.GroupBy(x => x.Id).Where(g => g.Count() > 1).Select(y => y.Key).ToList())
                 {
                     var s = (from i in this where item == i.Id select i).ToList();
@@ -603,13 +603,19 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
                 while (true)
                 {
                     string line = reader.ReadLine();
+
+                    if (line == null)
+                    {
+                        break;
+                    }
+
                     try
                     {
                         Schueler schueler = new Schueler();
                         var x = line.Split('\t');
                         schueler.Kurzname = x[0];
                         schueler.Name = x[1];
-                        schueler.Firstname = x[2];                        
+                        schueler.Firstname = x[2];
                         schueler.Geschlecht = x[3];
                         schueler.Geburtsdatum = x[4];
                         schueler.Grade = x[5];
@@ -626,15 +632,10 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
                     catch (Exception)
                     {
                     }
-
-                    if (line == null)
-                    {
-                        break;
-                    }
                 }
-
-                Console.WriteLine((" " + this.Count.ToString()).PadLeft(30, '.'));
             }
+
+            Console.WriteLine((" " + this.Count.ToString()).PadLeft(30, '.'));
         }
     }
 }

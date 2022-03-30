@@ -30,7 +30,7 @@ namespace atlantis2webuntis
 
             try
             {
-                Console.WriteLine("Atlantis2Webuntis (Version 20210809)");
+                Console.WriteLine("Atlantis2Webuntis (Version 20220330)");
                 Console.WriteLine("====================================");
                 Console.WriteLine("");
                 
