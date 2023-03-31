@@ -567,7 +567,11 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
 
         public Schuelers()
         {
-            string datei = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Student.csv";
+            var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToUpper().Split('\\')[1];
+
+            var datei = (from f in Directory.GetFiles(@"c:\users\" + user + @"\Downloads", "*.csv", SearchOption.AllDirectories) where f.ToLower().Contains("student") orderby File.GetLastWriteTime(f) select f).LastOrDefault();
+
+            //string datei = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Student.csv";
 
             if (!File.Exists(datei))
             {
@@ -576,9 +580,9 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
                 Console.WriteLine("1. sich als admin anmelden");
                 Console.WriteLine("2. auf Stammdaten > Schüler*innen klicken");
                 Console.WriteLine("3. 'Zum Kalenderdatum' anhaken");
-                Console.WriteLine("4. Berichte Schüler als CSV exportieren nach " + datei);
+                Console.WriteLine("4. Berichte Schüler als CSV im Download-Ordner speichern");
                 Console.WriteLine("ENTER beendet das Programm.");
-                Console.ReadKey();
+                Console.ReadKey();  
                 Environment.Exit(0);
             }
             else
@@ -596,6 +600,12 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
                     Environment.Exit(0);
                 }
             }
+
+            if (datei != null)
+            {
+                Console.WriteLine("Ausgewertete Datei: " + (Path.GetFileName(datei) + " ").PadRight(38, '.') + ". Erstell-/Bearbeitungszeitpunkt heute um " + System.IO.File.GetLastWriteTime(datei).ToShortTimeString());
+            }
+
             using (StreamReader reader = new StreamReader(datei))
             {
                 Console.Write("Schüler*innen aus Webuntis ".PadRight(75, '.'));
