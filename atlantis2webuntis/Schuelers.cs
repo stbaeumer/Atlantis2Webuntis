@@ -15,7 +15,7 @@ namespace atlantis2webuntis
     {
         internal void GeneriereImportdateiFürWebuntis(string datei)
         {
-            Encoding enc = Encoding.GetEncoding("ISO-8859-1");
+            Encoding enc = Encoding.GetEncoding("UTF-8");
 
             using (StreamWriter writer = new StreamWriter(datei, true, enc))
             {

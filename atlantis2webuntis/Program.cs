@@ -14,7 +14,7 @@ namespace atlantis2webuntis
 {
     class Program
     {
-        public const string ConnectionStringAtlantis = @"Dsn=Atlantis9;uid=DBA";
+        public const string ConnectionStringAtlantis = @"Dsn=Atlantis17u;uid=DBA";
         public const string ConnectionStringUntis = @"Provider = Microsoft.Jet.OLEDB.4.0; Data Source=M:\\Data\\gpUntis.mdb;";
         public static string PfadZuAtlantisFotos = @"\\fs01\SoftwarehausHeider\Atlantis\Dokumente\jpg";
         public static string ImportdateiFürWebuntis = "Importdatei_für_Webuntis_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".csv";
@@ -30,7 +30,7 @@ namespace atlantis2webuntis
 
             try
             {
-                Console.WriteLine("Atlantis2Webuntis (Version 20230331)");
+                Console.WriteLine("Atlantis2Webuntis (Version 20231019)");
                 Console.WriteLine("====================================");
                 Console.WriteLine("");
                 

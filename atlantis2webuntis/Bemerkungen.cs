@@ -24,7 +24,7 @@ DBA.schueler_info.datum_2 AS Bis
 FROM DBA.schueler_info
 WHERE s_typ_puin = 'B';", connection);
 
-                    Console.Write("Bemerkung ".PadRight(75, '.'));
+                    Console.Write("Bemerkungen ".PadRight(75, '.'));
 
                     connection.Open();
                     schuelerAdapter.Fill(dataSet, "DBA.klasse");
