@@ -1,4 +1,5 @@
 ﻿using Ionic.Zip;
+using Microsoft.Exchange.WebServices.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -77,6 +78,11 @@ namespace atlantis2webuntis
             {
                 Console.Write("Vorhandene Bilder ".PadRight(75, '.'));
 
+                UTF8Encoding utf8NoBom = new UTF8Encoding(false);
+                var filePath = "import.csv";
+
+                File.WriteAllText(filePath, "\"id\",\"custom_id\",\"email\",\"path\"" + Environment.NewLine, utf8NoBom);
+
                 List<string> bereitsVerarbeiteteBilder = new List<string>();
                 bereitsVerarbeiteteBilder = (Properties.Settings.Default.bereitsVerarbeiteteBilder).Split(',').ToList();
 
@@ -99,6 +105,11 @@ namespace atlantis2webuntis
                                     bilderHinzugefügt++;
                                     bereitsVerarbeiteteBilder.Add(schueler.Id.ToString());
                                     //Console.WriteLine("Bild hinzugefügt für " + schueler.Kurzname);
+
+                                    if (schueler.Mail != null && schueler.Mail != "")
+                                    {
+                                        File.AppendAllText(filePath, "\"\",\"\",\"" + schueler.Mail + "\",\"" + schueler.Id + ".jpg" + "\"" + Environment.NewLine, utf8NoBom);
+                                    }
                                 }
                                 else
                                 {
@@ -127,6 +138,12 @@ namespace atlantis2webuntis
                 Console.Write("Neu eingelesene und gezippte Bilder: ".PadRight(75, '.'));
 
                 zip.Save("SchülerBilder-" + DateTime.Now.ToFileTime() + ".zip");
+
+                zip.AddFile(filePath);
+
+                string datei = "Geevoo-Import-" + DateTime.Now.ToFileTime() + ".zip";
+
+                zip.Save(datei);
 
                 Console.WriteLine((" " + bilderHinzugefügt).PadLeft(30, '.'));
             }
@@ -508,7 +525,7 @@ ORDER BY ausgetreten DESC, klasse, schueler.name_1, schueler.name_2", connection
                         schueler.Birthday = theRow["Gebdat"].ToString().Length < 3 ? new DateTime() : DateTime.ParseExact(theRow["Gebdat"].ToString(), "dd.MM.yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
                         schueler.Telefon = theRow["telefon"] == null ? "" : theRow["telefon"].ToString();
                         schueler.Kurzname = schueler.generateKurzname();
-                        schueler.Mail = schueler.Kurzname + "@student.berufskolleg-borken.de";
+                        schueler.Mail = schueler.Kurzname + "@students.berufskolleg-borken.de";
                         schueler.Eintrittsdatum = theRow["Aufnahmedatum"].ToString().Length < 3 ? new DateTime() : DateTime.ParseExact(theRow["Aufnahmedatum"].ToString(), "dd.MM.yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 
                         schueler.AktuellJN = theRow["AktuellJN"] == null ? "" : theRow["AktuellJN"].ToString();

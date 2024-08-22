@@ -8,6 +8,8 @@ namespace atlantis2webuntis
     {
         public const string ConnectionStringUntis = @"Data Source=SQL01\UNTIS;Initial Catalog=master;Integrated Security=True";
 
+        public static string Dateipfad = @"\\fs01\Wiki\push2dokuwiki-seiten\";
+
         public static List<string> AktSj = new List<string>() {
             (DateTime.Now.Month >= 7 ? DateTime.Now.Year : DateTime.Now.Year - 1).ToString(),
             (DateTime.Now.Month >= 7 ? DateTime.Now.Year + 1 : DateTime.Now.Year).ToString()
